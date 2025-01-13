@@ -1,5 +1,6 @@
 # Project variables
 BINARY_NAME=parse
+BINARY_PATH=/usr/local/bin/
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS=-ldflags "-X ${BINARY_NAME}/internal/version.Version=${VERSION} -X ${BINARY_NAME}/internal/version.BuildTime=${BUILD_TIME}"
@@ -118,16 +119,13 @@ clean: ## Clean build artifacts
 	@go clean -cache -testcache -modcache
 
 #* Installation
-install: build ## Install the application
+install: ## Install the application
 	@echo "Installing $(BINARY_NAME)..."
-	@mkdir -p $(GOBIN_LOCAL)
-	@cp $(GOBIN)/$(BINARY_NAME) $(GOBIN_LOCAL)/
-	@echo "Installed $(BINARY_NAME) to $(GOBIN_LOCAL)/$(BINARY_NAME)"
-	@echo "Add $(GOBIN_LOCAL) to your PATH: export PATH=\$$PATH:$(GOBIN_LOCAL)"
+	@bash scripts/install.sh $(GOBIN)/$(BINARY_NAME)
 
 uninstall: ## Uninstall the application
 	@echo "Uninstalling $(BINARY_NAME)..."
-	@rm -f $(GOBIN_LOCAL)/$(BINARY_NAME)
+	@rm -f $(BINARY_PATH)/$(BINARY_NAME)
 
 envs: ## Print environment variables
 	@echo "GOBASE=$(GOBASE)"
